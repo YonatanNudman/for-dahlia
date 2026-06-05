@@ -115,7 +115,6 @@
       <button class="btn big-yes" onclick="sayYes()">Yes!! 💙</button>
       <div class="nos">
         <button class="no" id="no1">No</button>
-        <button class="no" id="no2">Let me think 🤔</button>
       </div>
     </section>
 
@@ -195,7 +194,7 @@
   // The "no" buttons get reparented to <body> when they flee, so hide them
   // on Yes — otherwise they linger over the next steps.
   function sayYes(){
-    ['no1','no2'].forEach(function(id){ var b=document.getElementById(id); if(b) b.style.display='none'; });
+    var b=document.getElementById('no1'); if(b) b.style.display='none';
     toStep('s1');
   }
   function nextFromActivities(){ if(order.length===0){ nudge('hint1','Pick at least one 💙'); return; } toStep('s2'); }
@@ -348,7 +347,6 @@
       btn.addEventListener('click', function(e){ e.preventDefault(); jump(e); });
     }
     evade(document.getElementById('no1'));
-    evade(document.getElementById('no2'));
   })();
 
   /* ---------- submit ---------- */
