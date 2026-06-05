@@ -71,6 +71,22 @@
   .hint{font-size:13px;color:#5a7a9a;margin:2px 0 16px;transition:color .2s ease;}
   .hint.nudge{color:var(--blue-d);font-weight:700;animation:shake .4s ease;}
   @keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-6px);}40%,80%{transform:translateX(6px);}}
+  /* cute mini calendar */
+  .cal{background:#f5faff;border:1.5px solid #d9ebfb;border-radius:18px;padding:12px 12px 14px;margin:2px 0 16px;}
+  .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .cal-title{font-weight:800;color:var(--navy);font-size:16px;}
+  .cal-nav{border:0;background:#e3f0fc;color:var(--blue-d);width:36px;height:36px;border-radius:11px;font-size:20px;font-weight:800;cursor:pointer;line-height:1;}
+  .cal-nav:disabled{opacity:.3;cursor:default;}
+  .cal-nav:active{transform:scale(.92);}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+  .cal-dow span{font-size:11px;color:#9bb4cd;text-align:center;font-weight:800;padding:2px 0;}
+  .cal-day{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;border-radius:11px;
+    font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;background:#fff;border:1px solid #eaf3fc;transition:transform .08s ease,background .15s ease;}
+  .cal-day:active{transform:scale(.9);}
+  .cal-day.empty{background:transparent;border:0;cursor:default;}
+  .cal-day.past{color:#cdd9e6;background:#f3f8fc;cursor:default;border-color:#f0f5fa;}
+  .cal-day.today{box-shadow:inset 0 0 0 2px var(--baby);}
+  .cal-day.sel{background:linear-gradient(135deg,var(--sky),var(--blue));color:#fff;border-color:var(--blue);box-shadow:0 4px 12px rgba(43,95,166,.3);}
   .ideabox{
     width:100%;border:1.5px dashed #bcd3ea;border-radius:14px;padding:13px;
     font-size:16px;font-family:inherit;margin-top:14px;color:var(--blue-d);
@@ -96,7 +112,7 @@
     <section class="step active" id="s0">
       <h1>Dahlia, will you go on a date with me?</h1>
       <p class="sub">Take your time. (The answer is yes. 😌)</p>
-      <button class="btn big-yes" onclick="toStep('s1')">Yes!! 💙</button>
+      <button class="btn big-yes" onclick="sayYes()">Yes!! 💙</button>
       <div class="nos">
         <button class="no" id="no1">No</button>
         <button class="no" id="no2">Let me think 🤔</button>
@@ -112,16 +128,26 @@
       <button class="btn" onclick="nextFromActivities()">Next →</button>
     </section>
 
-    <!-- Step 2: when -->
+    <!-- Step 2: when (cute calendar + time) -->
     <section class="step" id="s2">
-      <h1>Perfect. When works for you?</h1>
-      <p class="hint" id="hint2">Pick whatever's easy 💙</p>
-      <div class="chips" id="whenChips">
-        <button type="button" class="chip when" onclick="pickWhen(this)">This weekend</button>
-        <button type="button" class="chip when" onclick="pickWhen(this)">Next weekend</button>
-        <button type="button" class="chip when" onclick="pickWhen(this)">A weeknight</button>
-        <button type="button" class="chip when" onclick="pickWhen(this)">Soon 😊</button>
-        <button type="button" class="chip when" onclick="pickWhen(this)">You surprise me ✨</button>
+      <h1>Yay! When are you free?</h1>
+      <p class="hint" id="hint2">Pick a day that works around work & school 💙</p>
+      <div class="cal" id="cal">
+        <div class="cal-head">
+          <button class="cal-nav" id="calPrev" type="button" aria-label="previous month">‹</button>
+          <div class="cal-title" id="calTitle"></div>
+          <button class="cal-nav" id="calNext" type="button" aria-label="next month">›</button>
+        </div>
+        <div class="cal-grid cal-dow"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+        <div class="cal-grid" id="calDays"></div>
+      </div>
+      <p class="hint" id="hint2b">and what time? ⏰</p>
+      <div class="chips" id="timeChips">
+        <button type="button" class="chip time" onclick="pickTime(this)">Morning ☀️</button>
+        <button type="button" class="chip time" onclick="pickTime(this)">Lunch 🥪</button>
+        <button type="button" class="chip time" onclick="pickTime(this)">Afternoon 🌤️</button>
+        <button type="button" class="chip time" onclick="pickTime(this)">After work 🌆</button>
+        <button type="button" class="chip time" onclick="pickTime(this)">Evening 🌙</button>
       </div>
       <button class="btn" onclick="trySend()">Send it to Yo 💌</button>
     </section>
@@ -160,14 +186,20 @@
     window.scrollTo(0,0);
   }
   // Gentle, non-blocking nudge: shake the hint instead of an ugly alert().
-  function nudge(id){
+  function nudge(id, msg){
     var h=document.getElementById(id), orig=h.textContent;
-    h.textContent='Pick at least one 💙';
+    h.textContent=msg||'Pick at least one 💙';
     h.classList.remove('nudge'); void h.offsetWidth; h.classList.add('nudge');
     setTimeout(function(){ h.classList.remove('nudge'); h.textContent=orig; }, 1800);
   }
-  function nextFromActivities(){ if(order.length===0){ nudge('hint1'); return; } toStep('s2'); }
-  function trySend(){ if(!whenChoice){ nudge('hint2'); return; } send(); }
+  // The "no" buttons get reparented to <body> when they flee, so hide them
+  // on Yes — otherwise they linger over the next steps.
+  function sayYes(){
+    ['no1','no2'].forEach(function(id){ var b=document.getElementById(id); if(b) b.style.display='none'; });
+    toStep('s1');
+  }
+  function nextFromActivities(){ if(order.length===0){ nudge('hint1','Pick at least one 💙'); return; } toStep('s2'); }
+  function trySend(){ if(!selDate){ nudge('hint2','Pick a day first 💙'); return; } send(); }
 
   /* ---------- activity tap-to-rank ---------- */
   var order=[]; // labels in tap order
@@ -186,13 +218,53 @@
     });
   }
 
-  /* ---------- when ---------- */
-  var whenChoice='';
-  function pickWhen(el){
-    whenChoice=el.textContent.trim();
-    document.querySelectorAll('#whenChips .chip').forEach(function(c){c.classList.remove('sel');});
-    el.classList.add('sel');
+  /* ---------- when: cute mini calendar + time ---------- */
+  var whenChoice='', selDate=null, selTime='';
+  var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var DOWS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var today=new Date(); today.setHours(0,0,0,0);
+  var view=new Date(today.getFullYear(), today.getMonth(), 1);
+  var maxMonth=new Date(today.getFullYear(), today.getMonth()+3, 1); // up to ~3 months out
+
+  function sameDay(a,b){ return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate(); }
+  function renderCal(){
+    document.getElementById('calTitle').textContent=MONTHS[view.getMonth()]+' '+view.getFullYear();
+    var startDow=new Date(view.getFullYear(), view.getMonth(), 1).getDay();
+    var daysInMonth=new Date(view.getFullYear(), view.getMonth()+1, 0).getDate();
+    var grid=document.getElementById('calDays'); grid.innerHTML='';
+    for(var i=0;i<startDow;i++){ var e=document.createElement('div'); e.className='cal-day empty'; grid.appendChild(e); }
+    for(var d=1; d<=daysInMonth; d++){
+      var cell=document.createElement('div'); cell.className='cal-day'; cell.textContent=d;
+      var dt=new Date(view.getFullYear(), view.getMonth(), d);
+      if(dt<today){ cell.classList.add('past'); }
+      else{
+        if(sameDay(dt,today)) cell.classList.add('today');
+        if(sameDay(dt,selDate)) cell.classList.add('sel');
+        (function(theDate){ cell.addEventListener('click', function(){ selDate=theDate; buildWhen(); renderCal(); }); })(dt);
+      }
+      grid.appendChild(cell);
+    }
+    var vIdx=view.getFullYear()*12+view.getMonth();
+    var tIdx=today.getFullYear()*12+today.getMonth();
+    var mIdx=maxMonth.getFullYear()*12+maxMonth.getMonth();
+    document.getElementById('calPrev').disabled=(vIdx<=tIdx);
+    document.getElementById('calNext').disabled=(vIdx>=mIdx);
   }
+  function shiftMonth(n){ view=new Date(view.getFullYear(), view.getMonth()+n, 1); renderCal(); }
+  function pickTime(el){
+    selTime=el.textContent.trim();
+    document.querySelectorAll('#timeChips .chip').forEach(function(c){c.classList.remove('sel');});
+    el.classList.add('sel'); buildWhen();
+  }
+  function buildWhen(){
+    if(!selDate){ whenChoice=''; return; }
+    var s=DOWS[selDate.getDay()]+', '+MONTHS[selDate.getMonth()].slice(0,3)+' '+selDate.getDate();
+    if(selTime) s+=' · '+selTime;
+    whenChoice=s;
+  }
+  document.getElementById('calPrev').addEventListener('click', function(){ shiftMonth(-1); });
+  document.getElementById('calNext').addEventListener('click', function(){ shiftMonth(1); });
+  renderCal();
 
   /* ---------- the cringe "type your own" gag ---------- */
   var CRINGE=[
