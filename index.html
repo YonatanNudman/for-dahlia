@@ -95,6 +95,13 @@
   .ideabox:focus{outline:none;border-color:var(--sky);}
   .ideabox.cringe{font-weight:700;color:var(--blue-d);animation:wiggle .4s ease;}
   @keyframes wiggle{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+  .notebox{
+    width:100%;border:1.5px solid #cfe3f7;border-radius:14px;padding:12px 14px;
+    font-size:16px;font-family:inherit;margin-top:6px;color:var(--ink);
+    background:#fff;resize:none;line-height:1.4;
+  }
+  .notebox:focus{outline:none;border-color:var(--sky);box-shadow:0 0 0 3px rgba(127,183,236,.18);}
+  .notebox::placeholder{color:#a9c0d6;}
   .sig{margin-top:20px;font-size:15px;color:#80a0c2;font-weight:600;}
   .small{text-align:center;font-size:13px;color:#90b0d0;margin-top:14px;}
   .confetti{font-size:50px;animation:pop .6s ease both;}
@@ -148,6 +155,8 @@
         <button type="button" class="chip time" onclick="pickTime(this)">After work 🌆</button>
         <button type="button" class="chip time" onclick="pickTime(this)">Evening 🌙</button>
       </div>
+      <p class="hint" style="margin-bottom:6px">anything you wanna add? (optional)</p>
+      <textarea class="notebox" id="note" rows="2" maxlength="500" placeholder="leave Yo a note… 💌"></textarea>
       <button class="btn" onclick="trySend()">Send it to Yo 💌</button>
     </section>
 
@@ -351,12 +360,14 @@
 
   /* ---------- submit ---------- */
   function send(){
+    var noteEl=document.getElementById('note');
+    var note=noteEl ? noteEl.value.trim() : '';
     toStep('done');
     try{
       fetch('https://date-ask.yonatan-17d.workers.dev/submit',{
         method:'POST',
         headers:{'content-type':'application/json'},
-        body:JSON.stringify({picks:order, when:whenChoice, triedToType:triedToType})
+        body:JSON.stringify({picks:order, when:whenChoice, note:note, triedToType:triedToType})
       });
     }catch(e){/* she did her part; her answer still shows as sent */}
   }
