@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#bcdcf7">
+<title>A little question for Dahlia 💙</title>
+<style>
+  :root{
+    --baby:#bfe1fb; --sky:#7fb7ec; --blue:#3d7fd6; --blue-d:#2b5fa6;
+    --navy:#1e3a5f; --ink:#243b53; --card:#fbfdff; --bg1:#dbeeff; --bg2:#bcdcf7;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;height:100%;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+    color:var(--ink);
+    background:linear-gradient(165deg,var(--bg1) 0%, var(--bg2) 100%);
+    min-height:100dvh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center;
+    padding:max(20px,env(safe-area-inset-top)) 18px max(20px,env(safe-area-inset-bottom));
+  }
+  .petals{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+  .petal{position:absolute;bottom:-40px;font-size:20px;opacity:.55;animation:rise linear infinite;}
+  @keyframes rise{
+    0%{transform:translateY(0) rotate(0);opacity:0;}
+    10%{opacity:.6;}
+    100%{transform:translateY(-115dvh) rotate(360deg);opacity:0;}
+  }
+  .wrap{width:100%;max-width:430px;position:relative;z-index:1;}
+  .card{
+    background:var(--card);border-radius:26px;padding:30px 24px;
+    box-shadow:0 22px 60px rgba(43,95,166,.22);text-align:center;
+    animation:rise-in .5s ease both;
+  }
+  @keyframes rise-in{from{opacity:0;transform:translateY(16px) scale(.98);}to{opacity:1;transform:none;}}
+  .heart{font-size:44px;line-height:1;margin-bottom:8px;animation:beat 1.6s ease-in-out infinite;}
+  @keyframes beat{0%,100%{transform:scale(1);}14%{transform:scale(1.18);}28%{transform:scale(1);}42%{transform:scale(1.12);}}
+  h1{font-size:25px;margin:6px 4px 6px;line-height:1.28;color:var(--navy);}
+  p.sub{color:#4b6c91;margin:0 0 20px;font-size:15px;}
+  .step{display:none;}
+  .step.active{display:block;animation:rise-in .35s ease both;}
+  .btn{
+    display:block;width:100%;border:0;border-radius:16px;padding:17px;
+    font-size:18px;font-weight:700;cursor:pointer;margin-top:12px;color:#fff;
+    background:linear-gradient(135deg,var(--blue),var(--blue-d));
+    box-shadow:0 8px 20px rgba(43,95,166,.32);transition:transform .08s ease;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn.big-yes{font-size:20px;padding:19px;}
+  .nos{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+  .no{
+    border:1.5px solid #c9ddf0;background:#fff;color:#6f8cab;border-radius:14px;
+    padding:12px 16px;font-size:15px;font-weight:600;cursor:pointer;
+    transition:transform .12s ease, opacity .2s ease;
+  }
+  .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:4px 0 6px;}
+  .chip{
+    position:relative;border:1.6px solid #c9ddf0;background:#fff;color:var(--ink);
+    border-radius:999px;padding:11px 15px;font-size:15px;font-weight:600;cursor:pointer;
+    transition:transform .1s ease, background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .chip:active{transform:scale(.96);background:rgba(127,183,236,.22);}
+  .chip.sel{background:linear-gradient(135deg,var(--sky),var(--blue));color:#fff;border-color:var(--blue);}
+  .chip .rank{
+    position:absolute;top:-9px;right:-4px;min-width:21px;height:21px;border-radius:999px;
+    background:var(--navy);color:#fff;font-size:12px;font-weight:800;display:flex;
+    align-items:center;justify-content:center;padding:0 5px;box-shadow:0 2px 6px rgba(0,0,0,.2);
+    pointer-events:none;
+  }
+  .hint{font-size:13px;color:#5a7a9a;margin:2px 0 16px;transition:color .2s ease;}
+  .hint.nudge{color:var(--blue-d);font-weight:700;animation:shake .4s ease;}
+  @keyframes shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-6px);}40%,80%{transform:translateX(6px);}}
+  .ideabox{
+    width:100%;border:1.5px dashed #bcd3ea;border-radius:14px;padding:13px;
+    font-size:16px;font-family:inherit;margin-top:14px;color:var(--blue-d);
+    text-align:center;background:#f5faff;
+  }
+  .ideabox:focus{outline:none;border-color:var(--sky);}
+  .ideabox.cringe{font-weight:700;color:var(--blue-d);animation:wiggle .4s ease;}
+  @keyframes wiggle{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+  .sig{margin-top:20px;font-size:15px;color:#80a0c2;font-weight:600;}
+  .small{text-align:center;font-size:13px;color:#90b0d0;margin-top:14px;}
+  .confetti{font-size:50px;animation:pop .6s ease both;}
+  @keyframes pop{0%{transform:scale(0) rotate(-30deg);}70%{transform:scale(1.25) rotate(8deg);}100%{transform:scale(1) rotate(0);}}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;}}
+</style>
+</head>
+<body>
+<div class="petals" id="petals" aria-hidden="true"></div>
+<div class="wrap">
+  <div class="card">
+    <div class="heart">💙</div>
+
+    <!-- Step 0: the ask -->
+    <section class="step active" id="s0">
+      <h1>Dahlia, will you go on a date with me?</h1>
+      <p class="sub">Take your time. (The answer is yes. 😌)</p>
+      <button class="btn big-yes" onclick="toStep('s1')">Yes!! 💙</button>
+      <div class="nos">
+        <button class="no" id="no1">No</button>
+        <button class="no" id="no2">Let me think 🤔</button>
+      </div>
+    </section>
+
+    <!-- Step 1: activities (tap-to-rank) -->
+    <section class="step" id="s1">
+      <h1>Yay!! 🥳 What sounds fun?</h1>
+      <p class="hint" id="hint1">Tap in order of what you'd love most — 1st, 2nd, 3rd… (just one is perfect too 💙)</p>
+      <div class="chips"><button type="button" class="chip" onclick="pick(this)">Dinner 🍝</button><button type="button" class="chip" onclick="pick(this)">Arcade 🕹️</button><button type="button" class="chip" onclick="pick(this)">Six Flags 🎢</button><button type="button" class="chip" onclick="pick(this)">Concert 🎤</button><button type="button" class="chip" onclick="pick(this)">Broadway show 🎭</button><button type="button" class="chip" onclick="pick(this)">Comedy show 😂</button><button type="button" class="chip" onclick="pick(this)">Mini golf ⛳️</button><button type="button" class="chip" onclick="pick(this)">Sunset picnic 🧺</button><button type="button" class="chip" onclick="pick(this)">Carnival 🎡</button><button type="button" class="chip" onclick="pick(this)">Circus 🤡</button><button type="button" class="chip" onclick="pick(this)">Flight to Chicago ✈️</button><button type="button" class="chip" onclick="pick(this)">Weekend getaway 🧳</button><button type="button" class="chip" onclick="pick(this)">Ring shopping 💍😉</button></div>
+      <input class="ideabox" id="idea" placeholder="or type your own idea…" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="text">
+      <button class="btn" onclick="nextFromActivities()">Next →</button>
+    </section>
+
+    <!-- Step 2: when -->
+    <section class="step" id="s2">
+      <h1>Perfect. When works for you?</h1>
+      <p class="hint" id="hint2">Pick whatever's easy 💙</p>
+      <div class="chips" id="whenChips">
+        <button type="button" class="chip when" onclick="pickWhen(this)">This weekend</button>
+        <button type="button" class="chip when" onclick="pickWhen(this)">Next weekend</button>
+        <button type="button" class="chip when" onclick="pickWhen(this)">A weeknight</button>
+        <button type="button" class="chip when" onclick="pickWhen(this)">Soon 😊</button>
+        <button type="button" class="chip when" onclick="pickWhen(this)">You surprise me ✨</button>
+      </div>
+      <button class="btn" onclick="trySend()">Send it to Yo 💌</button>
+    </section>
+
+    <!-- Done -->
+    <section class="step" id="done">
+      <div class="confetti">🥹💙</div>
+      <h1>EEEK. Best yes ever.</h1>
+      <p class="sub">Yo just saw this and is grinning ear to ear. I'll text you. 💙</p>
+    </section>
+
+    <div class="sig">— Yo</div>
+  </div>
+  <p class="small">made just for Dahlia 💙</p>
+</div>
+
+<script>
+  /* ---------- floating blue petals ---------- */
+  (function(){
+    var box=document.getElementById('petals'), kinds=['💙','🩵','🌸','💧'];
+    for(var i=0;i<14;i++){
+      var p=document.createElement('span');p.className='petal';
+      p.textContent=kinds[i%kinds.length];
+      p.style.left=(Math.random()*100)+'%';
+      p.style.fontSize=(14+Math.random()*16)+'px';
+      p.style.animationDuration=(7+Math.random()*8)+'s';
+      p.style.animationDelay=(-Math.random()*12)+'s';
+      box.appendChild(p);
+    }
+  })();
+
+  /* ---------- step navigation ---------- */
+  function toStep(id){
+    document.querySelectorAll('.step').forEach(function(s){s.classList.remove('active');});
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+  }
+  // Gentle, non-blocking nudge: shake the hint instead of an ugly alert().
+  function nudge(id){
+    var h=document.getElementById(id), orig=h.textContent;
+    h.textContent='Pick at least one 💙';
+    h.classList.remove('nudge'); void h.offsetWidth; h.classList.add('nudge');
+    setTimeout(function(){ h.classList.remove('nudge'); h.textContent=orig; }, 1800);
+  }
+  function nextFromActivities(){ if(order.length===0){ nudge('hint1'); return; } toStep('s2'); }
+  function trySend(){ if(!whenChoice){ nudge('hint2'); return; } send(); }
+
+  /* ---------- activity tap-to-rank ---------- */
+  var order=[]; // labels in tap order
+  function pick(el){
+    var label=el.dataset.label || el.textContent.trim();
+    el.dataset.label=label;
+    var i=order.indexOf(label);
+    if(i>=0){ order.splice(i,1); el.classList.remove('sel'); var b=el.querySelector('.rank'); if(b)b.remove(); }
+    else{ order.push(label); el.classList.add('sel'); var s=document.createElement('span'); s.className='rank'; el.appendChild(s); }
+    renumber();
+  }
+  function renumber(){
+    document.querySelectorAll('.chip.sel').forEach(function(c){
+      var label=c.dataset.label, n=order.indexOf(label)+1, b=c.querySelector('.rank');
+      if(b)b.textContent=n;
+    });
+  }
+
+  /* ---------- when ---------- */
+  var whenChoice='';
+  function pickWhen(el){
+    whenChoice=el.textContent.trim();
+    document.querySelectorAll('#whenChips .chip').forEach(function(c){c.classList.remove('sel');});
+    el.classList.add('sel');
+  }
+
+  /* ---------- the cringe "type your own" gag ---------- */
+  var CRINGE=[
+    "I love you so much Yo 🥹",
+    "Yo is literally the best",
+    "ok fine, YES, obviously 😘",
+    "stop being cute and just pick",
+    "my answer is you 💍",
+    "Yo + Dahlia forever",
+    "no notes, you're perfect 🥰"
+  ];
+  var cidx=0, triedToType=false, lastGag=0;
+  (function(){
+    var box=document.getElementById('idea');
+    function now(){ try{ return performance.now(); }catch(e){ return 0; } }
+    function gag(e){
+      if(e && e.cancelable) e.preventDefault();
+      // One soft-keyboard keystroke (or paste) can fire beforeinput + input + paste
+      // as separate dispatches — coalesce them so only ONE cringe line shows per attempt.
+      var t=now();
+      if(t - lastGag < 80){ box.value=CRINGE[(cidx-1+CRINGE.length) % CRINGE.length]; return; }
+      lastGag=t;
+      triedToType=true;
+      box.value=CRINGE[cidx % CRINGE.length]; cidx++;
+      box.classList.remove('cringe'); void box.offsetWidth; box.classList.add('cringe');
+    }
+    // beforeinput catches typing/paste/autofill before it lands; input is the fallback
+    // for browsers where beforeinput isn't cancelable (older Android).
+    box.addEventListener('beforeinput', gag);
+    box.addEventListener('input', gag);
+    box.addEventListener('paste', gag);
+  })();
+
+  /* ---------- impossible "no" buttons ---------- */
+  (function(){
+    var QUIPS=["nope 😅","can't 💙","try again 😘","not an option","you sure? no.","just say yes!!","💙💙💙"];
+    // Measure the iPhone safe-area (notch / Dynamic Island / home indicator) so the
+    // fleeing buttons never land somewhere invisible. Falls back to sane constants.
+    function safeInsets(){
+      try{
+        var d=document.createElement('div');
+        d.style.cssText='position:fixed;top:0;left:0;width:0;height:0;visibility:hidden;'+
+          'padding-top:env(safe-area-inset-top);padding-right:env(safe-area-inset-right);'+
+          'padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);';
+        document.body.appendChild(d);
+        var cs=getComputedStyle(d);
+        var r={t:parseFloat(cs.paddingTop)||0,r:parseFloat(cs.paddingRight)||0,b:parseFloat(cs.paddingBottom)||0,l:parseFloat(cs.paddingLeft)||0};
+        d.remove(); return r;
+      }catch(e){ return {t:0,r:0,b:0,l:0}; }
+    }
+    var SAFE=safeInsets();
+    function evade(btn){
+      var q=0;
+      function jump(e){
+        if(e && e.cancelable) e.preventDefault();
+        // The card's entry animation leaves a transform on an ancestor, which would
+        // scope position:fixed to the card instead of the viewport. Reparent to <body>
+        // (no transform) so the button is positioned relative to the real screen.
+        if(btn.parentNode !== document.body){ document.body.appendChild(btn); }
+        var pad=12, w=btn.offsetWidth, h=btn.offsetHeight;
+        var vw=(window.visualViewport && visualViewport.width) || document.documentElement.clientWidth || window.innerWidth;
+        var vh=(window.visualViewport && visualViewport.height) || document.documentElement.clientHeight || window.innerHeight;
+        var minX=SAFE.l+pad, minY=SAFE.t+pad;
+        var maxX=Math.max(minX, vw - w - SAFE.r - pad);
+        var maxY=Math.max(minY, vh - h - SAFE.b - pad);
+        var x=Math.max(minX, Math.min(minX + Math.random()*(maxX-minX), maxX));
+        var y=Math.max(minY, Math.min(minY + Math.random()*(maxY-minY), maxY));
+        btn.style.position='fixed';
+        btn.style.zIndex='50';
+        btn.style.margin='0';
+        btn.style.left=x+'px';
+        btn.style.top=y+'px';
+        if(btn.id==='no1'){ btn.textContent=QUIPS[q % QUIPS.length]; q++; }
+        else { var s=parseFloat(btn.dataset.s||'1'); s=Math.max(0,s-0.22); btn.dataset.s=s; btn.style.transform='scale('+s+')'; btn.style.opacity=s; }
+        return false;
+      }
+      // pointerdown / touchstart fire BEFORE the click, so the tap never lands.
+      btn.addEventListener('pointerdown', jump, {passive:false});
+      btn.addEventListener('touchstart', jump, {passive:false});
+      btn.addEventListener('mouseenter', jump);   // desktop hover
+      btn.addEventListener('click', function(e){ e.preventDefault(); jump(e); });
+    }
+    evade(document.getElementById('no1'));
+    evade(document.getElementById('no2'));
+  })();
+
+  /* ---------- submit ---------- */
+  function send(){
+    toStep('done');
+    try{
+      fetch('https://date-ask.yonatan-17d.workers.dev/submit',{
+        method:'POST',
+        headers:{'content-type':'application/json'},
+        body:JSON.stringify({picks:order, when:whenChoice, triedToType:triedToType})
+      });
+    }catch(e){/* she did her part; her answer still shows as sent */}
+  }
+</script>
+</body>
+</html>
